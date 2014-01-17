@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.media.*?>
+<?import javafx.scene.media.MediaView?>
+
+<GridPane alignment="CENTER" hgap="10.0" prefHeight="600.0" prefWidth="800.0" vgap="10.0"
+          xmlns:fx="http://javafx.com/fxml" fx:controller="org.shyyko.ex.fm.reanimate.Controller">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="0" GridPane.halignment="CENTER"
+          GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+        <MediaView fx:id="mediaView"/>
+        <MenuBar>
+            <Menu mnemonicParsing="false" text="File">
+                <MenuItem mnemonicParsing="false" onAction="#onOpenXspfFileMenuClick" text="Open ExFm export file"/>
+                <MenuItem mnemonicParsing="false" text="Close"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+                <MenuItem mnemonicParsing="false" onAction="#onDownloadMenuClick" text="Download"/>
+                <MenuItem mnemonicParsing="false" onAction="#onDownloadAllMenuClick" text="Download all"/>
+                <MenuItem mnemonicParsing="false" text="Play"/>
+                <MenuItem mnemonicParsing="false" text="Pause"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+                <MenuItem mnemonicParsing="false" text="About"/>
+            </Menu>
+        </MenuBar>
+        <VBox prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="NEVER">
+            <HBox alignment="CENTER" fillHeight="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="NEVER">
+                <ProgressBar fx:id="downloadProgressBar" blendMode="SRC_OVER" disable="false" mouseTransparent="false"
+                             pickOnBounds="false" prefWidth="800.0" progress="0.0" style="" HBox.hgrow="ALWAYS"/>
+            </HBox>
+            <HBox alignment="CENTER" fillHeight="true" prefHeight="-1.0" prefWidth="-1.0">
+                <ProgressBar fx:id="downloadSuccessProgressBar" blendMode="SRC_OVER" disable="false"
+                             mouseTransparent="false"
+                             pickOnBounds="false" prefWidth="800.0" progress="0.0" style="" HBox.hgrow="ALWAYS">
+                    <effect>
+                        <ColorAdjust hue="-0.50"/>
+                    </effect>
+                </ProgressBar>
+            </HBox>
+            <HBox alignment="CENTER" fillHeight="true" prefHeight="-1.0" prefWidth="-1.0">
+                <ProgressBar fx:id="downloadFailureProgressBar" blendMode="SRC_OVER" disable="false"
+                             mouseTransparent="false"
+                             pickOnBounds="false" prefWidth="800.0" progress="0.0" style="" HBox.hgrow="ALWAYS">
+                    <effect>
+                        <ColorAdjust hue="0.80"/>
+                    </effect>
+                </ProgressBar>
+            </HBox>
+        </VBox>
+        <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tracksTableView" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                <columns>
+                    <TableColumn prefWidth="200.0" text="creator">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="creator"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="150.0" text="title">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="title"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="150.0" text="album">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="album"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="300.0" text="image">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="image"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="200.0" text="location">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="location"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="300.0" text="localFile">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="localFile"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </HBox>
+    </VBox>
+</GridPane>
