@@ -19,6 +19,7 @@ import org.shyyko.ex.fm.reanimate.xspf.XSPFParser;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class Controller {
@@ -54,26 +55,7 @@ public class Controller {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				if (mouseEvent.getClickCount() > 1) {
-					Track track = (Track) tracksTableView.getSelectionModel().getSelectedItem();
-					try {
-						track = alternative.getAlternative(track);
-					} catch (Exception e) {
-						showError("Error while finding alternatives", e);
-						return;
-					}
-					Media media = new Media(track.getLocation());
-					//mediaView.setMediaPlayer(player);
-					if (mediaPlayer != null) {
-						mediaPlayer.pause();
-					}
-					mediaPlayer = new MediaPlayer(media);
-					mediaPlayer.setOnError(new Runnable() {
-						@Override
-						public void run() {
-							showError("Error while playing", mediaPlayer.getError());
-						}
-					});
-					mediaPlayer.play();
+					playSelectedTrack();
 				}
 			}
 		});
@@ -86,26 +68,13 @@ public class Controller {
 			return;
 		}
 		Track selectedTrack = (Track) selectedItem;
-		JFileChooser jFileChooser = new JFileChooser();
-		jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		jFileChooser.showSaveDialog(null);
-		File file = jFileChooser.getSelectedFile();
+
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		File file = directoryChooser.showDialog(window);
 		if (file != null) {
-			try {
-				downloadProgressBar.setProgress(0);
-
-				boolean downloaded = new AudioDownloader(alternative).downloadFile(selectedTrack, file);
-				System.out.println("1 " + downloaded);
-				if (!downloaded) {
-					selectedTrack = alternative.getAlternative(selectedTrack);
-					downloaded = new AudioDownloader(alternative).downloadFile(selectedTrack, file);
-					System.out.println("2 " + downloaded);
-				}
-
-				downloadProgressBar.setProgress(0);
-			} catch (Exception e) {
-				showError("Error during saving", e);
-			}
+			AudioDownloader audioDownloader = new AudioDownloader(alternative);
+			audioDownloader.setOnProgressListener(new DownloadListener());
+			audioDownloader.downloadTracks(Arrays.asList(selectedTrack), file);
 		}
 	}
 
@@ -122,15 +91,40 @@ public class Controller {
 		File file = directoryChooser.showDialog(window);
 		if (file != null) {
 			AudioDownloader audioDownloader = new AudioDownloader(alternative);
-			audioDownloader.setOnProgressListener(new AudioDownloader.OnProgressListener() {
-				@Override
-				public void onProgress(double progress, double success, double failure) {
-					downloadProgressBar.setProgress(progress);
-					downloadSuccessProgressBar.setProgress(success);
-					downloadFailureProgressBar.setProgress(failure);
-				}
-			});
+			audioDownloader.setOnProgressListener(new DownloadListener());
 			audioDownloader.downloadTracks(tracks, file);
+		}
+	}
+
+	private void playSelectedTrack() {
+		Track track = (Track) tracksTableView.getSelectionModel().getSelectedItem();
+		try {
+			track = alternative.getAlternative(track);
+		} catch (Exception e) {
+			showError("Error while finding alternatives", e);
+			return;
+		}
+		Media media = new Media(track.getLocation());
+		//mediaView.setMediaPlayer(player);
+		if (mediaPlayer != null) {
+			mediaPlayer.pause();
+		}
+		mediaPlayer = new MediaPlayer(media);
+		mediaPlayer.setOnError(new Runnable() {
+			@Override
+			public void run() {
+				showError("Error while playing", mediaPlayer.getError());
+			}
+		});
+		mediaPlayer.play();
+	}
+
+	private class DownloadListener implements AudioDownloader.OnProgressListener {
+		@Override
+		public void onProgress(double progress, double success, double failure) {
+			downloadProgressBar.setProgress(progress);
+			downloadSuccessProgressBar.setProgress(success);
+			downloadFailureProgressBar.setProgress(failure);
 		}
 	}
 }
